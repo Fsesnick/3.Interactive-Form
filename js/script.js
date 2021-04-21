@@ -1,3 +1,4 @@
+const form = document.querySelector('form');
 /**
  *  T-shirt elements
  */
@@ -21,16 +22,31 @@ const credit_card = document.getElementById("credit-card");
 const paypal  = document.getElementById("paypal");
 const bitcoin = document.getElementById("bitcoin");
 
-console.log(payment);
+/*console.log(payment);
 console.log(credit_card);
 console.log(paypal);
-console.log(bitcoin);
+console.log(bitcoin);*/
+
+/**
+ * Form Validation
+ */
+const Name = document.getElementById("name")
+const Email = document.getElementById("email")
+const RegforAct = document.getElementById("activities");
+const CardNum = document.getElementById("cc-num");
+const ZipCode = document.getElementById("zip");
+const CVV = document.getElementById('cvv');
+console.log(RegforAct);
+console.log(CardNum);
+console.log(ZipCode);
+console.log(CVV);
+
 /**
  * Default settings When the page loads, 
  */
 window.addEventListener('load', () => {
 
-    document.getElementById("name").focus();
+    Name.focus();
     colorOptions.disabled = true;
     document.getElementById("other-job-role").style.visibility = "hidden";
     bitcoin.style.visibility ="hidden";
@@ -101,6 +117,20 @@ payment.addEventListener('change', (evt) => {
         bitcoin.style.visibility ="hidden";
         credit_card.style.visibility ="visible";
         paypal.style.visibility ="hidden"; 
+    }
+});
+
+form.addEventListener('submit', (evt)=>{
+    let name = /^[a-zA-Z ]{1,30}$/.test(Name.value);
+    let email = /^[^@]+@[^@]+\.[a-z]+$/i.test(Email.value);
+    //https://stackoverflow.com/questions/9315647/regex-credit-card-number-tests
+    //let cardNUm = /^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/.test(CardNum);
+   // let zip = test(ZipCode);
+    if(!name || !email || !cardNUm){
+        evt.preventDefault();
+        alert("smth wrong!!");
+    }else{
+        alert("All good!");
     }
 });
 
