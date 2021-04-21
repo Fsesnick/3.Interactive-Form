@@ -1,7 +1,11 @@
 const Theme = document.getElementById("design");
 const colorOptions = document.getElementById("color");
 const JobRole = document.getElementById("title");
+const Total_cost = document.getElementById("activities-cost");
+const activitiesBox = document.getElementById('activities-box');
 
+console.log(Total_cost);
+console.log(activitiesBox);
 //const Designs = document.querySelectorAll('.shirt-designs');
 
 /**
@@ -10,7 +14,7 @@ const JobRole = document.getElementById("title");
 //window.addEventListener('load', () => {
 
     document.getElementById("name").focus();
-    colorOptions.disabled = true;
+ //   colorOptions.disabled = true;
     document.getElementById("other-job-role").style.visibility = "hidden";
 
 //});
@@ -31,11 +35,9 @@ JobRole.addEventListener('change', (evt) =>{
  */
 Theme.addEventListener('change', (evt) =>{
 
-    
-     let clickedValue = evt.target.value;
-  //  console.log(clickedValue);
+let clickedValue = evt.target.value;
 colorOptions.disabled = false;
- 
+
 
 for(let i=0; i<colorOptions.length;i++){
     
@@ -54,3 +56,18 @@ for(let i=0; i<colorOptions.length;i++){
 
 });
 
+
+let costOfActivities = 0;
+activitiesBox.addEventListener('change', (evt) => {
+
+    let data_cost = parseInt( evt.target.getAttribute ("data-cost"));
+    //console.log(data_cost, typeof(data_cost));
+
+    if(evt.target.checked){
+        costOfActivities += data_cost;
+    }else{
+        costOfActivities -= data_cost;
+    }
+    //console.log(costOfActivities);
+    Total_cost.innerHTML = `Total: $${costOfActivities}`;
+});
