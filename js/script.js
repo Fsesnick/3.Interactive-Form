@@ -1,3 +1,6 @@
+/**
+ * Form element
+ */
 const form = document.querySelector('form');
 /**
  *  T-shirt elements
@@ -21,7 +24,7 @@ const payment = document.getElementById("payment");
 const credit_card = document.getElementById("credit-card");
 const paypal  = document.getElementById("paypal");
 const bitcoin = document.getElementById("bitcoin");
-
+let paymentMethod ='credit-card';
 /*console.log(payment);
 console.log(credit_card);
 console.log(paypal);
@@ -36,10 +39,11 @@ const RegforAct = document.getElementById("activities");
 const CardNum = document.getElementById("cc-num");
 const ZipCode = document.getElementById("zip");
 const CVV = document.getElementById('cvv');
-console.log(RegforAct);
+let ActivitiesTotal =0;
+/*console.log(RegforAct);
 console.log(CardNum);
 console.log(ZipCode);
-console.log(CVV);
+console.log(CVV);*/
 
 /**
  * Default settings When the page loads, 
@@ -94,21 +98,27 @@ activitiesBox.addEventListener('change', (evt) => {
 
     let data_cost = parseInt( evt.target.getAttribute ("data-cost"));
     //console.log(data_cost, typeof(data_cost));
-        if(evt.target.checked){
+    //(evt.target.checked) ? ActivitiesTotal++ : ActivitiesTotal--;
+      
+    if(evt.target.checked){
             costOfActivities += data_cost;
+            ActivitiesTotal++;
         }else{
             costOfActivities -= data_cost;
+            ActivitiesTotal--;
         }
     //console.log(costOfActivities);
     Total_cost.innerHTML = `Total: $${costOfActivities}`;
 });
 
 payment.addEventListener('change', (evt) => {
-    console.log("got here");
+    paymentMethod = evt.target.value;
+    console.log(paymentMethod);
+   
     if (evt.target.value === 'paypal') {
         bitcoin.style.visibility ="hidden";
         credit_card.style.visibility ="hidden";
-        paypal.style.visibility ="visible";        
+        paypal.style.visibility ="visible";                 
     }else if(evt.target.value === 'bitcoin'){
         bitcoin.style.visibility ="visible";
         credit_card.style.visibility ="hidden";
@@ -121,16 +131,39 @@ payment.addEventListener('change', (evt) => {
 });
 
 form.addEventListener('submit', (evt)=>{
-    let name = /^[a-zA-Z ]{1,30}$/.test(Name.value);
+   
+    let name =  /^[a-zA-Z]+ ?[a-zA-Z]*? ?[a-zA-Z]*?$/.test(Name.value);
     let email = /^[^@]+@[^@]+\.[a-z]+$/i.test(Email.value);
-    //https://stackoverflow.com/questions/9315647/regex-credit-card-number-tests
-    //let cardNUm = /^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/.test(CardNum);
-   // let zip = test(ZipCode);
-    if(!name || !email || !cardNUm){
+    let activities = ActivitiesValidator(); 
+    
+    console.log(name,email, activities);
+
+    if(paymentMethod === 'credit-card'){
+        let cardValid
+        let zip = /^\d{5}$/.test(ZipCode.value);  //5 digits
+        const cardNUm = /^\d{13,16}$/.test(CardNum.value); //13 to 16 digit
+        const cvv = /^\d{3}$/.test(CVV.value);// 3 digits
+        if( zip===false|| cardNUm===false|| cvv===false ){
+           cardValid = false;
+        }else{
+            cardValid = true;
+        }
+        console.log(zip, cardNUm, cvv, cardValid);
+    }
+
+    if(!name || !email || !activities ){
         evt.preventDefault();
         alert("smth wrong!!");
     }else{
         alert("All good!");
     }
 });
+
+/* Helper function to validate Register for Activities */
+const ActivitiesValidator = () => {
+      const ActivitiesIsValid = ActivitiesTotal > 0;
+      console.log(`Activities section validation test evaluates to ${ActivitiesIsValid}`);
+    
+    return ActivitiesIsValid;  
+  }
 
