@@ -52,10 +52,11 @@ window.addEventListener('load', () => {
 
     Name.focus();
     colorOptions.disabled = true;
-    document.getElementById("other-job-role").style.visibility = "hidden";
+    document.getElementById("other-job-role").style.visibility = "hidden"; //"Other job role" should be hidden by default
     bitcoin.style.visibility ="hidden";
     paypal.style.visibility="hidden";
-    payment.firstElementChild.nextElementSibling.setAttribute('selected','true');
+    payment.firstElementChild.nextElementSibling.setAttribute('selected','true'); //target the element’s second child element and give it the selected property.
+    
 });
 
 /**
@@ -111,6 +112,11 @@ activitiesBox.addEventListener('change', (evt) => {
     Total_cost.innerHTML = `Total: $${costOfActivities}`;
 });
 
+/**
+ * Payment  listen for the change event
+ * to display the <div> element with the id that matches the value of the event.target element.
+ * And hide the other two <div> elements.
+ */
 payment.addEventListener('change', (evt) => {
     paymentMethod = evt.target.value;
     console.log(paymentMethod);
@@ -130,14 +136,84 @@ payment.addEventListener('change', (evt) => {
     }
 });
 
+function validationPass(element){
+    element.parentElement.classList.add('valid');
+    element.parentElement.classList.remove('not-valid');
+    element.parentElement.lastElementChild.style.display = 'none';
+    
+  }
+  
+function validationFail(element){
+    element.parentElement.classList.add('not-valid');
+    element.parentElement.classList.remove('valid');
+    element.parentElement.lastElementChild.style.display = 'block';
+    
+  }
+/* Helper function to validate name input */
+const nameValidator = () => {
+  
+    let nameIsValid =  /^[a-zA-Z]+ ?[a-zA-Z]*? ?[a-zA-Z]*?$/.test(Name.value);
+    if(nameIsValid){
+        validationPass(Name);
+      }else{
+        validationFail(Name);
+      }
+    
+    return nameIsValid;
+  }
+
+/* Helper function to validate email input */
+const emailValidator = () => {
+
+    let emailIsValid = /^[^@]+@[^@]+\.[a-z]+$/i.test(Email.value);
+    if(emailIsValid){
+        validationPass(Email);
+      }else{
+        validationFail(Email);
+      }
+    
+    return emailIsValid;
+  }
+
+/* Helper function to validate Register for Activities */
+const ActivitiesValidator = () => {
+    const ActivitiesIsValid = ActivitiesTotal > 0;
+    console.log(`Activities section validation test evaluates to ${ActivitiesIsValid}`);
+  
+    if(ActivitiesIsValid){
+        validationPass(activitiesBox);
+      }else{
+        validationFail(activitiesBox);
+      }
+  
+  return ActivitiesIsValid;  
+}
+Name.addEventListener('keyup', nameValidator);
+Email.addEventListener('keyup', emailValidator);
+activitiesBox.addEventListener('keyup',ActivitiesValidator);
+
+/**
+ * Form submission should be prevented if one or more of the required fields or sections is not filled out correctly. 
+ */
 form.addEventListener('submit', (evt)=>{
    
-    let name =  /^[a-zA-Z]+ ?[a-zA-Z]*? ?[a-zA-Z]*?$/.test(Name.value);
-    let email = /^[^@]+@[^@]+\.[a-z]+$/i.test(Email.value);
-    let activities = ActivitiesValidator(); 
-    
-    console.log(name,email, activities);
+    evt.preventDefault();
 
+    if (!nameValidator()) {
+      console.log('Invalid name prevented submission');
+      evt.preventDefault();
+    }
+  
+    if (!emailValidator()) {
+      console.log('Invalid email prevented submission');
+      evt.preventDefault();
+    }
+
+    if (!ActivitiesValidator()) {
+        console.log('Select an activity');
+        evt.preventDefault();
+      }
+    
     if(paymentMethod === 'credit-card'){
         let cardValid
         let zip = /^\d{5}$/.test(ZipCode.value);  //5 digits
@@ -148,22 +224,31 @@ form.addEventListener('submit', (evt)=>{
         }else{
             cardValid = true;
         }
-        console.log(zip, cardNUm, cvv, cardValid);
+    
+        //console.log(zip, cardNUm, cvv, cardValid);
     }
 
-    if(!name || !email || !activities ){
-        evt.preventDefault();
-        alert("smth wrong!!");
-    }else{
-        alert("All good!");
-    }
+
 });
 
-/* Helper function to validate Register for Activities */
-const ActivitiesValidator = () => {
-      const ActivitiesIsValid = ActivitiesTotal > 0;
-      console.log(`Activities section validation test evaluates to ${ActivitiesIsValid}`);
-    
-    return ActivitiesIsValid;  
-  }
+
+
+  /**
+   * reference: https://dev.to/microrony/difference-between-classlist-and-classname-45j7
+   * "Register for Activities" section in focus
+   */
+const activitiesCheckbox = document.querySelectorAll('#activities-box input');
+//console.log(activitiesCheckbox);
+for (let i = 0; i < activitiesCheckbox.length; i++) {
+	const input = activitiesCheckbox[i];
+	input.addEventListener('focus', () => {
+		// "focus" class when element is in focus
+		input.parentElement.classList.add('focus');
+	});
+	input.addEventListener('blur', () => {
+		// Remove "focus" class on blur (opposite of focus)
+		input.parentElement.classList.remove('focus');
+	});
+}
+
 
