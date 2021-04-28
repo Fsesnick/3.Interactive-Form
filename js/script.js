@@ -14,9 +14,6 @@ const JobRole = document.getElementById("title");
 const Total_cost = document.getElementById("activities-cost");
 const activitiesBox = document.getElementById('activities-box');
 
-//console.log(Total_cost);
-//console.log(activitiesBox);
-
 /**
  *  Payment elements
  */
@@ -25,10 +22,6 @@ const credit_card = document.getElementById("credit-card");
 const paypal  = document.getElementById("paypal");
 const bitcoin = document.getElementById("bitcoin");
 let paymentMethod ='credit-card';
-/*console.log(payment);
-console.log(credit_card);
-console.log(paypal);
-console.log(bitcoin);*/
 
 /**
  * Form Validation
@@ -40,10 +33,6 @@ const CardNum = document.getElementById("cc-num");
 const ZipCode = document.getElementById("zip");
 const CVV = document.getElementById('cvv');
 let ActivitiesTotal =0;
-/*console.log(RegforAct);
-console.log(CardNum);
-console.log(ZipCode);
-console.log(CVV);*/
 
 /**
  * Default settings When the page loads, 
@@ -82,11 +71,9 @@ Theme.addEventListener('change', (evt) =>{
             let options = colorOptions[i].getAttribute('data-theme');
             
                 if(options === clickedValue){
-                    //  colorOptions[i].style.visibility = "visible";
                     colorOptions[i].hidden = false;
                     colorOptions[i].selected = true;
                 }else{
-                    //  colorOptions[i].style.visibility = "hidden";
                     colorOptions[i].hidden = true;
                     colorOptions[i].selected = false;
                 }
@@ -188,6 +175,30 @@ const ActivitiesValidator = () => {
   
   return ActivitiesIsValid;  
 }
+const creditCardValidator=()=>{
+
+    let cardValid
+    let zip = /^\d{5}$/.test(ZipCode.value);  //5 digits
+    const cardNUm = /^\d{13,16}$/.test(CardNum.value); //13 to 16 digit
+    const cvv = /^\d{3}$/.test(CVV.value);// 3 digits
+
+     if(zip){
+        validationPass(ZipCode);
+      }else{
+        validationFail(ZipCode);
+      }
+      if(cardNUm){
+        validationPass(CardNum);
+      }else{
+        validationFail(CardNum);
+      }
+      if(cvv){
+        validationPass(CVV);
+      }else{
+        validationFail(CVV);
+      }
+}
+
 Name.addEventListener('keyup', nameValidator);
 Email.addEventListener('keyup', emailValidator);
 activitiesBox.addEventListener('keyup',ActivitiesValidator);
@@ -197,15 +208,15 @@ activitiesBox.addEventListener('keyup',ActivitiesValidator);
  */
 form.addEventListener('submit', (evt)=>{
    
-    evt.preventDefault();
+   // evt.preventDefault();
 
     if (!nameValidator()) {
-      console.log('Invalid name prevented submission');
+      console.log('Invalid name ');
       evt.preventDefault();
     }
   
     if (!emailValidator()) {
-      console.log('Invalid email prevented submission');
+      console.log('Invalid email ');
       evt.preventDefault();
     }
 
@@ -215,23 +226,14 @@ form.addEventListener('submit', (evt)=>{
       }
     
     if(paymentMethod === 'credit-card'){
-        let cardValid
-        let zip = /^\d{5}$/.test(ZipCode.value);  //5 digits
-        const cardNUm = /^\d{13,16}$/.test(CardNum.value); //13 to 16 digit
-        const cvv = /^\d{3}$/.test(CVV.value);// 3 digits
-        if( zip===false|| cardNUm===false|| cvv===false ){
-           cardValid = false;
-        }else{
-            cardValid = true;
+        if (!creditCardValidator()) {
+            console.log('Invalid Credit Card Input');
+            evt.preventDefault();
         }
-    
-        //console.log(zip, cardNUm, cvv, cardValid);
     }
 
 
 });
-
-
 
   /**
    * reference: https://dev.to/microrony/difference-between-classlist-and-classname-45j7
